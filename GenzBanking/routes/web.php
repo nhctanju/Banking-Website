@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
-
+use App\Http\Controllers\WalletController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -28,3 +28,14 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 Route::get('/dashboard', [DashboardController::class, 'dash'])
     ->middleware(['auth'])
     ->name('dashboard');
+
+
+
+Route::middleware('auth')->group(function () {
+        // Show wallet creation form
+Route::get('/wallet/create', [WalletController::class, 'showCreateForm'])->name('wallet.create.form');
+    
+        // Handle form submission
+Route::post('/wallet/create', [WalletController::class, 'createWallet'])->name('wallet.create');
+    });
+    

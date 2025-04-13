@@ -10,7 +10,11 @@
                     <li class="nav-item">
                         <a class="nav-link active" href="#">
                             <i class="bi bi-plus-circle"></i>
-                            Create Wallet
+                            <a class="nav-link" href="{{ route('wallet.create.form') }}">
+    <i class="bi bi-plus-circle"></i>
+    Create Wallet
+</a>
+
                         </a>
                     </li>
                     <li class="nav-item">
