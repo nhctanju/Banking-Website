@@ -15,6 +15,7 @@
                     @endif
 
                     {{ __('You are logged in!') }}
+                    <a href = "{{ route ('dashboard') }}"> See the dashboard </a>
                 </div>
             </div>
         </div>
