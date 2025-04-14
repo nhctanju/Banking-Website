@@ -19,20 +19,18 @@ class WalletController extends Controller
 
     public function createWallet(Request $request)
     {
-       
-
-        $request->validate([
+        $validated = $request->validate([
             'name' => 'nullable|string|max:255',
-            'balance'=>'nullable|string|max:255'
+            'balance' => 'required|numeric|min:0'
         ]);
 
-        Wallet::create([
-            
-            'balance' => 0.00,
-            'name' => $request->name ?? 'Default Wallet',
-        ]);
+        // Add user_id to the validated data
+        $validated['user_id'] = Auth::id();
 
-        return redirect()->route('wallet.create.form')->with('success', 'Wallet created successfully!');
+        Wallet::create($validated);
+
+        return redirect()->route('dashboard')
+            ->with('success', 'Wallet created successfully!');
     }
 }
 
