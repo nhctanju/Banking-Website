@@ -18,7 +18,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">
+                        <a class="nav-link" href="{{ route('card_offers') }}">
                             <i class="bi bi-credit-card"></i>
                             See Card Offers
                         </a>
@@ -33,6 +33,12 @@
             <h1 class="h2 mt-4">Welcome to Your Dashboard</h1>
             <p>Select an option from the sidebar to proceed.</p>
             <!-- Add more dashboard content here -->
+            <div class="container">
+            <!-- Include Wallet Information -->
+        @include('wallet-info')
+
+    <!-- Other dashboard content -->
+            </div>
         </main>
     </div>
 </div>
