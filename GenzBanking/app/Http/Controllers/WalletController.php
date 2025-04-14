@@ -32,6 +32,13 @@ class WalletController extends Controller
         return redirect()->route('dashboard')
             ->with('success', 'Wallet created successfully!');
     }
+    public function store(Request $request)
+{
+    // Validation and wallet creation logic
+
+    return redirect()->route('dashboard')->with('success', 'Wallet created successfully.');
+}
+
 }
 
 

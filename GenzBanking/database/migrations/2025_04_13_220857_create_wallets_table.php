@@ -9,7 +9,7 @@ return new class extends Migration
     {
         if (!Schema::hasTable('wallet')) { // Check if the table already exists
             Schema::create('wallet', function (Blueprint $table) {
-                $table->id();
+                $table->unsignedBigInteger('user_id');
                 $table->foreignId('user_id')->constrained()->onDelete('cascade');
                 $table->string('name')->nullable();
                 $table->decimal('balance', 10, 2)->default(0.00);

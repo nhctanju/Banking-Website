@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\WalletController;
+use App\Http\Controllers\CardOfferController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -26,7 +28,7 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 
 
 Route::get('/dashboard', [DashboardController::class, 'dash'])
-    ->middleware(['auth'])
+    ->middleware(['auth'])      
     ->name('dashboard');
 
 
@@ -38,4 +40,7 @@ Route::get('/wallet/create', [WalletController::class, 'showCreateForm'])->name(
         // Handle form submission
 Route::post('/wallet/create', [WalletController::class, 'createWallet'])->name('wallet.create');
     });
-    
+    // show card info
+Route::middleware(['auth'])->group(function () {
+    Route::get('/card-offers', [CardOfferController::class, 'madari'])->name('card_offers');
+});
