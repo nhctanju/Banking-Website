@@ -230,7 +230,7 @@
             </div>
         </div>
     </section>
-
+ welcomeblade-fronetend
     <!-- Features Section -->
     <section id="features" class="py-5 bg-white">
         <div class="container py-5">
@@ -328,6 +328,11 @@
             </div>
         </div>
     </footer>
+
+    <div class="content">
+        <h1>Welcome to GenZBanking, Your money,our responsibility</h1>
+    </div>
+
 
     <!-- Bootstrap JS Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
