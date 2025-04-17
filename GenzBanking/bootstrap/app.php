@@ -1,5 +1,5 @@
 <?php
-
+#php artisan schedule:work
 /*
 |--------------------------------------------------------------------------
 | Create The Application

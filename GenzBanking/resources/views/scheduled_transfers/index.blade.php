@@ -10,7 +10,10 @@
         </div>
     @endif
 
-    <a href="{{ route('scheduled_transfers.create') }}" class="btn btn-primary mb-3">Schedule a New Transfer</a>
+    <div class="mb-3">
+        <a href="{{ route('scheduled_transfers.create') }}" class="btn btn-primary">Schedule a New Transfer</a>
+        <a href="{{ route('dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
+    </div>
 
     <table class="table table-bordered">
         <thead>
