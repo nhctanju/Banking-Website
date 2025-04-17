@@ -323,15 +323,12 @@
                         <a href="#" class="text-white fs-4"><i class="bi bi-instagram"></i></a>
                         <a href="#" class="text-white fs-4"><i class="bi bi-linkedin"></i></a>
                     </div>
-                    <p class="small text-white-50">© 2023 GenZ Wallet. All rights reserved.</p>
+                    <p class="small text-white-50">© 2025 GenZ Wallet. All rights reserved.</p>
                 </div>
             </div>
         </div>
     </footer>
 
-    <div class="content">
-        <h1>Welcome to GenZBanking, Your money,our responsibility</h1>
-    </div>
 
 
     <!-- Bootstrap JS Bundle with Popper -->
