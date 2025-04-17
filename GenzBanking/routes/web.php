@@ -4,6 +4,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\WalletController;
 use App\Http\Controllers\CardOfferController;
+use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\LoanRequestController;
+use App\Http\Controllers\CurrencyController;
+use App\Http\Controllers\ScheduledTransferController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,27 +25,65 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-
-
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
-
-Route::get('/dashboard', [DashboardController::class, 'dash'])
-    ->middleware(['auth'])      
-    ->name('dashboard');
-
-
-
+// Authenticated routes group
 Route::middleware('auth')->group(function () {
-        // Show wallet creation form
-Route::get('/wallet/create', [WalletController::class, 'showCreateForm'])->name('wallet.create.form');
+    // Home route
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
     
-        // Handle form submission
-Route::post('/wallet/create', [WalletController::class, 'createWallet'])->name('wallet.create');
+    // Dashboard route
+    Route::get('/dashboard', [LoanRequestController::class, 'index'])->name('dashboard');
+    
+    // Wallet routes
+    Route::prefix('wallet')->group(function () {
+        Route::get('/create', [WalletController::class, 'showCreateForm'])->name('wallet.create.form');
+        Route::post('/create', [WalletController::class, 'createWallet'])->name('wallet.create');
     });
-    // show card info
-Route::middleware(['auth'])->group(function () {
-    Route::get('/card-offers', [CardOfferController::class, 'madari'])->name('card_offers');
+    
+    // Card offers routes
+    Route::get('/card-offers', [CardOfferController::class, 'index'])->name('card_offers');
+    
+    // Transfer routes
+    Route::get('/transfer', [TransactionController::class, 'showTransferForm'])->name('transactions.transfer');
+    Route::post('/transfer', [TransactionController::class, 'transfer'])->name('transactions.transfer.submit');
+    
+    // Other transaction routes
+    Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
+    Route::get('/transactions/{id}/receipt', [TransactionController::class, 'generateReceipt'])->name('transactions.receipt');
+    Route::get('/transactions/create', [TransactionController::class, 'create'])->name('transactions.create');
+    Route::post('/transactions', [TransactionController::class, 'store'])->name('transactions.store');
+    
+    // Notifications route
+    Route::patch('/notifications/{id}/mark-as-read', function ($id) {
+        $notification = Auth::user()->notifications()->find($id);
+        if ($notification) {
+            $notification->markAsRead();
+        }
+        return back();
+    })->name('notifications.markAsRead');
+    
+    // Loan requests routes
+    Route::get('/loan-requests/create', [LoanRequestController::class, 'create'])->name('loan_requests.create');
+    Route::get('/loan-requests', [LoanRequestController::class, 'index'])->name('loan_requests.index');
+    Route::post('/loan-requests', [LoanRequestController::class, 'store'])->name('loan_requests.store');
+    Route::patch('/loan-requests/{id}/approve', [LoanRequestController::class, 'approve'])->name('loan_requests.approve');
+    Route::patch('/loan-requests/{id}/decline', [LoanRequestController::class, 'decline'])->name('loan_requests.decline');
+    Route::get('/loan-requests/{id}', [LoanRequestController::class, 'show'])->name('loan_requests.show');
+    
+    // Scheduled transfers routes
+    Route::resource('scheduled_transfers', ScheduledTransferController::class)->except(['show']);
+}); // <-- Properly close the middleware group here
+
+// Time-check route (outside the auth middleware group)
+Route::get('/time-check', function() {
+    return [
+        'APP_TIMEZONE' => config('app.timezone'),
+        'PHP Time' => now()->toDateTimeString(),
+        'DB Time' => \DB::select('SELECT NOW() as now')[0]->now,
+        'Server Time' => shell_exec('date'),
+        'Scheduled Transfers Pending' => \App\Models\ScheduledTransfer::where('status', 'pending')
+            ->where('scheduled_at', '<=', now())
+            ->count()
+    ];
 });
