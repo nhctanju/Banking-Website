@@ -8,7 +8,7 @@
             
             <p><strong>Balance:</strong> ${{ number_format(auth()->user()->wallet->balance, 2) }}</p>
         @else
-            <p><strong>Balance:</strong> $0.00</p>
+            <p><strong>Balance:</strong> BDT0.00</p>
         @endif
     </div>
 </div>
