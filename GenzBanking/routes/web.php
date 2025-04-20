@@ -9,6 +9,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoanRequestController;
 use App\Http\Controllers\CurrencyController;
 use App\Http\Controllers\ScheduledTransferController;
+use App\Http\Controllers\SharedWalletController;
 
 /*
 |--------------------------------------------------------------------------
@@ -86,4 +87,13 @@ Route::get('/time-check', function() {
             ->where('scheduled_at', '<=', now())
             ->count()
     ];
+});
+
+
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/shared-wallets', [SharedWalletController::class, 'index'])->name('shared_wallets.index');
+    Route::get('/shared-wallets/create', [SharedWalletController::class, 'create'])->name('shared_wallets.create');
+    Route::post('/shared-wallets', [SharedWalletController::class, 'store'])->name('shared_wallets.store');
+    Route::get('/shared-wallets/{sharedWallet}', [SharedWalletController::class, 'show'])->name('shared_wallets.show');
 });

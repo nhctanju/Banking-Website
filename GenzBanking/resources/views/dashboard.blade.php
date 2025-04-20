@@ -137,6 +137,11 @@
                             <i class="bi bi-calendar-check"></i> Scheduled Transfers
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('shared_wallets.index') }}">
+                            <i class="bi bi-calendar-check"></i> Manage Shared Wallets
+                        </a>
+                    </li>
                 </ul>
             </div>
         </nav>
@@ -175,7 +180,7 @@
 
                     <!-- Wallet Balance -->
                     <div class="animate__animated animate__fadeInLeft animate__delay-2s">
-                        <strong>Balance:</strong> {{ Auth::user()->wallet ? '$' . number_format(Auth::user()->wallet->balance, 2) : 'No Wallet Created' }}
+                        <strong>Balance:</strong> {{ Auth::user()->wallet ? 'BDT' . number_format(Auth::user()->wallet->balance, 2) : 'No Wallet Created' }}
                     </div>
                 </div>
             </div>
