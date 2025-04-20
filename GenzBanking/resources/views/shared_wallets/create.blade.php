@@ -8,6 +8,8 @@
         <div class="mb-3">
             <label for="name" class="form-label">Wallet Name</label>
             <input type="text" class="form-control" id="name" name="name" required>
+            <label for="name" class="form-label">Balance</label>
+            <input type="text" class="form-control" id="balance" name="balance" required>
         </div>
         <button type="submit" class="btn btn-success">Create Wallet</button>
     </form>
