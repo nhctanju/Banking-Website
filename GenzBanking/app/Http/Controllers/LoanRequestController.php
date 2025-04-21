@@ -43,29 +43,40 @@ class LoanRequestController extends Controller
     {
         $validated = $request->validate([
             'lender_identifier' => 'required|string',
-            'amount' => 'required|numeric|min:1',
+            'amount' => 'required|numeric|min:0.01',
             'repayment_date' => 'required|date|after:today',
             'purpose' => 'required|string|max:255',
         ]);
 
-        // Find the lender by Wallet ID or Phone Number
-        $lender = $this->findLender($validated['lender_identifier']);
+        $borrowerWallet = Auth::user()->wallet;
+        $lenderWallet = $this->findLenderWallet($validated['lender_identifier']);
 
-        if (!$lender) {
-            return back()->with('error', 'Lender not found. Please check the Wallet ID or Phone Number.');
+        // Check if lender wallet exists
+        if (!$lenderWallet) {
+            return back()->with('error', 'Lender wallet not found.');
+        }
+
+        // Check if borrower is requesting a loan from themselves
+        if ($borrowerWallet->id === $lenderWallet->id) {
+            return back()->with('error', 'You cannot request a loan for yourself.');
+        }
+
+        // Check if borrower and lender have the same currency
+        if ($borrowerWallet->currency !== $lenderWallet->currency) {
+            return back()->with('error', 'Borrower and lender must have the same currency.');
         }
 
         // Create the loan request
         LoanRequest::create([
             'borrower_id' => Auth::id(),
-            'lender_id' => $lender->id,
+            'lender_id' => $lenderWallet->user_id,
             'amount' => $validated['amount'],
             'repayment_date' => $validated['repayment_date'],
             'purpose' => $validated['purpose'],
             'status' => 'pending',
         ]);
 
-        return redirect()->route('loan_requests.create')->with('success', 'Loan request submitted successfully.');
+        return back()->with('success', 'Loan request submitted successfully.');
     }
 
     public function approve($id)
@@ -148,15 +159,14 @@ class LoanRequestController extends Controller
         return view('loan_requests.show', compact('loanRequest'));
     }
 
-    private function findLender($identifier)
+    private function findLenderWallet($identifier)
     {
-        // Try to find the lender by Wallet ID
+        // Try by wallet ID
         $wallet = Wallet::find($identifier);
-        if ($wallet) {
-            return $wallet->user;
-        }
+        if ($wallet) return $wallet;
 
-        // Try to find the lender by Phone Number
-        return User::where('phone', $identifier)->first();
+        // Try by phone number
+        $user = User::where('phone', $identifier)->first();
+        return $user?->wallet;
     }
 }

@@ -4,11 +4,34 @@
     </div>
     <div class="card-body">
         <p><strong>Wallet Holder:</strong> {{ auth()->user()->name }}</p>
-        @if(auth()->user()->wallet)
-            
-            <p><strong>Balance:</strong> ${{ number_format(auth()->user()->wallet->balance, 2) }}</p>
+
+        @php
+            $wallet = auth()->user()->wallet;
+
+            $currencySymbols = [
+                'USD' => '$',
+                'EUR' => '€',
+                'GBP' => '£',
+                'BDT' => '৳',
+                'INR' => '₹',
+                'JPY' => '¥',
+                'CAD' => 'C$',
+                'AUD' => 'A$',
+                'CNY' => '¥',
+                'KRW' => '₩',
+                // Add more if needed
+            ];
+        @endphp
+
+        @if($wallet)
+            @php
+                $symbol = $currencySymbols[$wallet->currency] ?? $wallet->currency;
+                $formattedBalance = number_format($wallet->balance, 2);
+            @endphp
+            <p><strong>Wallet ID:</strong> {{ $wallet->id }}</p>
+            <p><strong>Balance:</strong> {{ $symbol }}{{ $formattedBalance }} ({{ $wallet->currency }})</p>
         @else
-            <p><strong>Balance:</strong> BDT0.00</p>
+            <p><strong>No wallet found. Please create one.</strong></p>
         @endif
     </div>
 </div>

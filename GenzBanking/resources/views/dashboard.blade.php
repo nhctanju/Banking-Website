@@ -136,6 +136,10 @@
                         <a class="nav-link" href="{{ route('scheduled_transfers.index') }}">
                             <i class="bi bi-calendar-check"></i> Scheduled Transfers
                         </a>
+                        <li class="nav-item">
+                        <a class="nav-link" href="{{ route('multi-currency.transfer') }}">
+                            <i class="bi bi-currency-exchange"></i> Multi-Currency Transfer
+                        </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('shared_wallets.index') }}">
@@ -185,7 +189,26 @@
 
                     <!-- Wallet Balance -->
                     <div class="animate__animated animate__fadeInLeft animate__delay-2s">
-                        <strong>Balance:</strong> {{ Auth::user()->wallet ? 'BDT' . number_format(Auth::user()->wallet->balance, 2) : 'No Wallet Created' }}
+                        @php
+                            $wallet = Auth::user()->wallet;
+                            $currencySymbols = [
+                                'USD' => '$',
+                                'EUR' => '€',
+                                'GBP' => '£',
+                                'BDT' => '৳',
+                                'INR' => '₹',
+                                'JPY' => '¥',
+                                'CAD' => 'C$',
+                                'AUD' => 'A$',
+                                'CNY' => '¥',
+                                'KRW' => '₩',
+                                // Add more currencies if needed
+                            ];
+                            $symbol = $wallet ? ($currencySymbols[$wallet->currency] ?? $wallet->currency) : '';
+                        @endphp
+
+                        <strong>Balance:</strong> 
+                        {{ $wallet ? $symbol . number_format($wallet->balance, 2) . " ({$wallet->currency})" : 'No Wallet Created' }}
                     </div>
                 </div>
             </div>
