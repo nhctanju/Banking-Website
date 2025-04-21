@@ -15,31 +15,43 @@
         </div>
     @endif
 
+    @if (session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
+
     <form action="{{ route('scheduled_transfers.store') }}" method="POST">
         @csrf
+
+        <!-- Recipient -->
         <div class="mb-3">
-            <label for="recipient_id" class="form-label">Recipient</label>
-            <select name="recipient_id" id="recipient_id" class="form-control" required>
-                @foreach ($users as $user)
-                    <option value="{{ $user->id }}">{{ $user->name }} ({{ $user->email }})</option>
-                @endforeach
-            </select>
+            <label for="recipient_identifier" class="form-label">Recipient (Wallet ID or Phone Number)</label>
+            <input type="text" name="recipient_identifier" id="recipient_identifier" class="form-control" 
+                   placeholder="Enter Wallet ID or Phone Number" required>
         </div>
+
+        <!-- Amount -->
         <div class="mb-3">
             <label for="amount" class="form-label">Amount</label>
             <input type="number" name="amount" id="amount" class="form-control" 
                    placeholder="Enter amount" step="0.01" min="0.01" required>
         </div>
+
+        <!-- Scheduled Date & Time -->
         <div class="mb-3">
             <label for="scheduled_at" class="form-label">Scheduled Date & Time</label>
             <input type="datetime-local" name="scheduled_at" id="scheduled_at" class="form-control" required>
         </div>
+
+        <!-- Description -->
         <div class="mb-3">
             <label for="description" class="form-label">Description (Optional)</label>
             <textarea name="description" id="description" class="form-control" 
-                     placeholder="Enter description"></textarea>
+                      placeholder="Enter description"></textarea>
         </div>
-        
+
+        <!-- Submit Button -->
         <div class="d-flex gap-3 mt-4">
             <button type="submit" class="btn btn-primary px-4">
                 <i class="bi bi-calendar-plus"></i> Schedule Transfer

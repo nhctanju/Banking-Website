@@ -30,10 +30,22 @@ class TransactionController extends Controller
         $senderWallet = Auth::user()->wallet;
         $recipientWallet = $this->findRecipientWallet($validated['recipient']);
 
+        // Check if recipient wallet exists
         if (!$recipientWallet) {
             return back()->with('error', 'Recipient wallet not found');
         }
 
+        // Check if the sender is trying to transfer to their own wallet
+        if ($senderWallet->id === $recipientWallet->id) {
+            return back()->with('error', "You can't transfer money to yourself");
+        }
+
+        // Check if the sender and recipient have the same currency
+        if ($senderWallet->currency !== $recipientWallet->currency) {
+            return back()->with('error', "Your current balance currency doesn't match the recipient's. Initiate a Multi-currency transfer to proceed.");
+        }
+
+        // Check if the sender has sufficient balance
         if (!$senderWallet->canTransfer($validated['amount'])) {
             return back()->with('error', 'Insufficient balance');
         }

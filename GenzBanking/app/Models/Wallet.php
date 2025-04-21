@@ -13,10 +13,16 @@ class Wallet extends Model
     // Specify the table name since it's not the conventional plural
     protected $table = 'wallet';
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
     protected $fillable = [
-        'user_id',
         'name',
-        'balance'
+        'balance',
+        'currency',
+        'user_id',
     ];
 
     protected $casts = [

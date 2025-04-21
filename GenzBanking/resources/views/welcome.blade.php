@@ -230,7 +230,6 @@
             </div>
         </div>
     </section>
- welcomeblade-fronetend
     <!-- Features Section -->
     <section id="features" class="py-5 bg-white">
         <div class="container py-5">

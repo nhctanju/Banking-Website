@@ -1,17 +1,33 @@
 <?php
 
-
+// app/Models/SharedWallet.php
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class SharedWallet extends Model
 {
-    protected $fillable = ['name', 'balance'];
+    use HasFactory;
 
-    public function users()
+    protected $fillable = ['name', 'creator_id', 'balance', 'description'];
+
+    public function creator()
     {
-        return $this->belongsToMany(User::class, 'shared_wallet_user', 'shared_wallet_id', 'user_id');
+        return $this->belongsTo(User::class, 'creator_id');
+    }
+
+    public function members()
+    {
+        return $this->belongsToMany(User::class, 'shared_wallet_members')
+                    ->withTimestamps();
+    }
+
+    public function transactions()
+    {
+        return $this->hasMany(SharedWalletTransaction::class);
     }
 }
+
+

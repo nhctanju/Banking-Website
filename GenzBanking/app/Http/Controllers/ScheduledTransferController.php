@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ScheduledTransfer;
 use App\Models\User;
+use App\Models\Wallet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -20,18 +21,28 @@ class ScheduledTransferController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'recipient_id' => 'required|exists:users,id',
+            'recipient_identifier' => 'required|string',
             'amount' => 'required|numeric|min:0.01',
             'scheduled_at' => 'required|date|after:now',
             'description' => 'nullable|string|max:255',
         ]);
 
-        // Ensure the amount is cast to a float
-        $validated['amount'] = (float) $validated['amount'];
+        $senderWallet = Auth::user()->wallet;
+        $recipientWallet = $this->findRecipientWallet($validated['recipient_identifier']);
+
+        // Check if the recipient has a wallet
+        if (!$recipientWallet) {
+            return back()->with('error', 'Recipient wallet not found.');
+        }
+
+        // Check if the sender and recipient have the same currency
+        if ($senderWallet->currency !== $recipientWallet->currency) {
+            return back()->with('error', 'Sender and recipient must have the same currency to schedule a transfer.');
+        }
 
         ScheduledTransfer::create([
             'sender_id' => Auth::id(),
-            'recipient_id' => $validated['recipient_id'],
+            'recipient_id' => $recipientWallet->user_id,
             'amount' => $validated['amount'],
             'scheduled_at' => $validated['scheduled_at'],
             'description' => $validated['description'],
@@ -39,6 +50,17 @@ class ScheduledTransferController extends Controller
         ]);
 
         return redirect()->route('scheduled_transfers.index')->with('success', 'Transfer scheduled successfully.');
+    }
+
+    private function findRecipientWallet($identifier)
+    {
+        // Try by wallet ID
+        $wallet = Wallet::find($identifier);
+        if ($wallet) return $wallet;
+
+        // Try by phone number
+        $user = User::where('phone', $identifier)->first();
+        return $user?->wallet;
     }
 
     // List all scheduled transfers for the logged-in user
@@ -68,6 +90,19 @@ class ScheduledTransferController extends Controller
             'scheduled_at' => 'required|date|after:now',
             'description' => 'nullable|string|max:255',
         ]);
+
+        $senderWallet = Auth::user()->wallet;
+        $recipientWallet = Wallet::where('user_id', $validated['recipient_id'])->first();
+
+        // Check if the recipient has a wallet
+        if (!$recipientWallet) {
+            return back()->with('error', 'Recipient does not have a wallet.');
+        }
+
+        // Check if the sender and recipient have the same currency
+        if ($senderWallet->currency !== $recipientWallet->currency) {
+            return back()->with('error', 'Sender and recipient must have the same currency to schedule a transfer.');
+        }
 
         $scheduledTransfer->update($validated);
 

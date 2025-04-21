@@ -6,22 +6,34 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateSharedWalletUserTable extends Migration
 {
-    public function up()
-    
-    {  if (!Schema::hasTable('shared_wallet_user')) {
-            Schema::create('shared_wallet_user', function (Blueprint $table) {
-                $table->id();
-                $table->unsignedBigInteger('shared_wallet_id');
-                $table->unsignedBigInteger('user_id');
-                $table->timestamps();
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('shared_wallet_user', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('shared_wallet_id'); // Foreign key to shared_wallets table
+            $table->unsignedBigInteger('user_id'); // Foreign key to users table
+            $table->timestamps();
 
-                $table->foreign('shared_wallet_id')->references('id')->on('shared_wallets')->onDelete('cascade');
-                $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            });
-            }    
+            // Add foreign key constraint
+            $table->foreign('shared_wallet_id')
+                ->references('id')
+                ->on('shared_wallets')
+                ->onDelete('cascade');
+            
+            $table->foreign('user_id')
+                ->references('id')
+                ->on('users')
+                ->onDelete('cascade');
+        });
     }
 
-    public function down()
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
     {
         Schema::dropIfExists('shared_wallet_user');
     }

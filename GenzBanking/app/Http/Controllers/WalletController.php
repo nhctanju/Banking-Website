@@ -2,43 +2,71 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
-
-
-
-use Illuminate\Support\Facades\Auth;
 use App\Models\Wallet;
+use App\Models\Currency;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class WalletController extends Controller
 {
+    /**
+     * Show the form to create a new wallet.
+     */
     public function showCreateForm()
     {
-        return view('create');
+        // Fetch all available currencies
+        $currencies = Currency::all();
+
+        // Return the create wallet view with the currencies
+        return view('create', compact('currencies'));
     }
 
+    /**
+     * Handle the creation of a new wallet.
+     */
     public function createWallet(Request $request)
     {
-        $validated = $request->validate([
-            'name' => 'nullable|string|max:255',
-            'balance' => 'required|numeric|min:0'
-        ]);
+        try {
+            // Validate the request data
+            $validated = $request->validate([
+                'name' => 'nullable|string|max:255', // Wallet name is optional
+                'balance' => 'required|numeric|min:0', // Initial balance must be a positive number
+                'currency' => 'required|string|size:3|exists:currencies,code', // Validate the selected currency
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Debug validation errors
+            return back()->withErrors($e->errors())->withInput();
+        }
 
-        // Add user_id to the validated data
+        // Add the authenticated user's ID to the validated data
         $validated['user_id'] = Auth::id();
 
+        // Create the wallet with the validated data
         Wallet::create($validated);
 
-        return redirect()->route('dashboard')
-            ->with('success', 'Wallet created successfully!');
+        // Redirect to the dashboard with a success message
+        return redirect()->route('dashboard')->with('success', 'Wallet created successfully!');
     }
+
+    /**
+     * Store a new wallet (alternative method).
+     */
     public function store(Request $request)
-{
-    // Validation and wallet creation logic
+    {
+        // Validate the request data
+        $validated = $request->validate([
+            'name' => 'nullable|string|max:255', // Wallet name is optional
+            'balance' => 'required|numeric|min:0', // Initial balance must be a positive number
+            'currency' => 'required|string|size:3|exists:currencies,code', // Validate the selected currency
+        ]);
 
-    return redirect()->route('dashboard')->with('success', 'Wallet created successfully.');
+        // Add the authenticated user's ID to the validated data
+        $validated['user_id'] = Auth::id();
+
+        // Create the wallet with the validated data
+        Wallet::create($validated);
+
+        // Redirect to the dashboard with a success message
+        return redirect()->route('dashboard')->with('success', 'Wallet created successfully!');
+    }
 }
-
-}
-
-
