@@ -36,6 +36,11 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(SharedWallet::class);
     }
+    // Add to User.php
+    public function atms()
+    {
+        return $this->hasMany(ATM::class);
+    }
 
 
 }   

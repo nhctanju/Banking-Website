@@ -12,6 +12,9 @@ use App\Http\Controllers\ScheduledTransferController;
 use App\Http\Controllers\MultiCurrencyController;
 use App\Http\Controllers\MultiCurrencyTransferController;
 use App\Http\Controllers\SharedWalletController;
+use App\Http\Controllers\AtmController;
+use App\Http\Controllers\WithdrawController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -112,4 +115,20 @@ Route::get('/time-check', function () {
             ->where('scheduled_at', '<=', now())
             ->count(),
     ];
+});
+
+
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/shared-wallets', [SharedWalletController::class, 'index'])->name('shared_wallets.index');
+    Route::get('/shared-wallets/create', [SharedWalletController::class, 'create'])->name('shared_wallets.create');
+    Route::post('/shared-wallets', [SharedWalletController::class, 'store'])->name('shared_wallets.store');
+    Route::get('/shared-wallets/{sharedWallet}', [SharedWalletController::class, 'show'])->name('shared_wallets.show');
+    // Add inside auth middleware group
+    Route::get('/nearby-atms', [AtmController::class, 'index'])->name('atms.nearby');
+    Route::get('/withdraw', [WithdrawController::class, 'showForm'])->name('withdraw');
+    Route::post('/withdraw', [WithdrawController::class, 'process'])->name('withdraw.submit');
+    // Add inside auth middleware group
+    Route::get('/withdraw', [WithdrawController::class, 'showForm'])->name('withdraw');
+    Route::post('/withdraw', [WithdrawController::class, 'process'])->name('withdraw.submit');
 });

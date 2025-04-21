@@ -146,6 +146,11 @@
                             <i class="bi bi-calendar-check"></i> Manage Shared Wallets
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('atms.nearby') }}">
+                            <i class="bi bi-credit-card"></i> Nearby ATMs
+                        </a>
+                    </li>
                 </ul>
             </div>
         </nav>
