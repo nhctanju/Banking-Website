@@ -1,35 +1,37 @@
 <?php
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSharedWalletTransactionsTable extends Migration
+class CreateSharedWalletsTable extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
-        Schema::create('shared_wallet_transactions', function (Blueprint $table) {
+        Schema::create('shared_wallets', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('shared_wallet_id');
-            $table->unsignedBigInteger('user_id'); // The user who contributed or spent
-            $table->decimal('amount', 16, 2);
-            $table->string('type'); // e.g., 'contribution', 'expense'
-            $table->text('note')->nullable();
+            $table->string('name');
+            $table->unsignedBigInteger('creator_id'); // User who created the wallet
+            $table->decimal('balance', 16, 2)->default(0); 
+            $table->text('description')->nullable();
             $table->timestamps();
 
-            $table->foreign('shared_wallet_id')
-                  ->references('id')
-                  ->on('shared_wallets')
-                  ->onDelete('cascade');
-
-            $table->foreign('user_id')
+            // Add foreign key constraint for creator_id
+            $table->foreign('creator_id')
                   ->references('id')
                   ->on('users')
                   ->onDelete('cascade');
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
-        Schema::dropIfExists('shared_wallet_transactions');
+        Schema::dropIfExists('shared_wallets');
     }
 }
