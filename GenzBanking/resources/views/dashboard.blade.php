@@ -151,6 +151,43 @@
                             <i class="bi bi-credit-card"></i> Nearby ATMs
                         </a>
                     </li>
+                    <li class="nav-item">
+                        @if (Auth::user()->wallet)
+                            <a class="nav-link" href="{{ route('wallets.statement', Auth::user()->wallet->id) }}">
+                                <i class="bi bi-file-earmark-text"></i> Wallet Statement
+                            </a>
+                        @else
+                            <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">
+                                <i class="bi bi-file-earmark-text"></i> Wallet Statement (Unavailable)
+                            </a>
+                        @endif
+                    </li>
+                    <li class="nav-item">
+                        @if (Auth::user()->wallet)
+                            <a class="nav-link" href="{{ route('passport_endorsements.create') }}">
+                                <i class="bi bi-file-earmark-text"></i> Passport Endorsement
+                            </a>
+                        @else
+                            <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">
+                                <i class="bi bi-file-earmark-text"></i> Passport Endorsement (Unavailable)
+                            </a>
+                        @endif
+                    </li>
+                    <li class="nav-item">
+                        @php
+                            // Fetch card requests for the logged-in user
+                            $cardRequests = \App\Models\CardRequest::where('user_id', Auth::id())->get();
+                        @endphp
+                        @if ($cardRequests->isNotEmpty())
+                            <a class="nav-link" href="{{ route('card_requests.status') }}">
+                                <i class="bi bi-file-earmark-text"></i>> Card Request Status
+                            </a>
+                        @else
+                            <a class="nav-link" href="#">
+                                <i class="bi bi-file-earmark-text"></i>> Card Request Status (Unavailable)
+                            </a>
+                        @endif
+                    </li>
                 </ul>
             </div>
         </nav>

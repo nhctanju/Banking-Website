@@ -14,6 +14,9 @@ use App\Http\Controllers\MultiCurrencyTransferController;
 use App\Http\Controllers\SharedWalletController;
 use App\Http\Controllers\AtmController;
 use App\Http\Controllers\WithdrawController;
+use App\Http\Controllers\WalletStatementController;
+use App\Http\Controllers\PassportEndorsementController;
+use App\Http\Controllers\CardRequestController;
 
 
 /*
@@ -102,6 +105,20 @@ Route::middleware('auth')->group(function () {
         Route::post('/{sharedWallet}/contribute', [SharedWalletController::class, 'contribute'])->name('shared_wallets.contribute');
         Route::post('/{sharedWallet}/add-member', [SharedWalletController::class, 'addMember'])->name('shared_wallets.add_member');
     });
+
+    // Wallet Statements
+    Route::get('/wallets/{walletId}/statement', [WalletStatementController::class, 'index'])->name('wallets.statement');
+    Route::get('/wallets/{walletId}/statement/download', [WalletStatementController::class, 'downloadPdf'])->name('wallets.statement.download');
+
+    // Passport Endorsements
+    Route::get('/passport-endorsements/create', [PassportEndorsementController::class, 'create'])->name('passport_endorsements.create');
+    Route::post('/passport-endorsements', [PassportEndorsementController::class, 'store'])->name('passport_endorsements.store');
+    Route::get('/passport-endorsements', [PassportEndorsementController::class, 'index'])->name('passport_endorsements.index');
+
+    // Card Requests
+    Route::get('/card-requests/create', [CardRequestController::class, 'create'])->name('card_requests.create');
+    Route::post('/card-requests', [CardRequestController::class, 'store'])->name('card_requests.store');
+    Route::get('/card-requests/status', [CardRequestController::class, 'index'])->name('card_requests.status');
 });
 
 // Time Check (outside auth group)

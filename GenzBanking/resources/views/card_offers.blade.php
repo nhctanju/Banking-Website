@@ -45,6 +45,7 @@
                                 @endforeach
                             </tbody>
                         </table>
+                        <a href="{{ route('card_requests.create') }}" class="btn btn-primary mt-3">Request for a Card</a>
                     </div>
                 </div>
             </div>
