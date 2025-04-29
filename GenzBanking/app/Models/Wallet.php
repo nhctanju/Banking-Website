@@ -89,19 +89,52 @@ class Wallet extends Model
      */
     public function allTransactions()
     {
-        return Transaction::where('sender_wallet_id', $this->id)
+        // Fetch regular transactions
+        $regularTransactions = Transaction::where('sender_wallet_id', $this->id)
             ->orWhere('receiver_wallet_id', $this->id)
             ->orderBy('created_at', 'desc')
             ->get();
+
+        // Debugging output for regular transactions
+        if ($regularTransactions->isEmpty()) {
+            logger('No regular transactions found for wallet ID: ' . $this->id);
+        } else {
+            logger('Regular Transactions:', $regularTransactions->toArray());
+        }
+
+        // Fetch multi-currency transfers
+        $multiCurrencyTransfers = MultiCurrencyTransfer::where('sender_wallet_id', $this->id)
+            ->orWhere('receiver_wallet_id', $this->id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        // Debugging output for multi-currency transfers
+        if ($multiCurrencyTransfers->isEmpty()) {
+            logger('No multi-currency transfers found for wallet ID: ' . $this->id);
+        } else {
+            logger('Multi-Currency Transfers:', $multiCurrencyTransfers->toArray());
+        }
+
+        // Merge both collections and sort by date
+        $allTransactions = $regularTransactions->merge($multiCurrencyTransfers)->sortByDesc('created_at');
+
+        // Debugging output for all transactions
+        if ($allTransactions->isEmpty()) {
+            logger('No transactions found after merging for wallet ID: ' . $this->id);
+        } else {
+            logger('All Transactions:', $allTransactions->toArray());
+        }
+
+        return $allTransactions;
     }
 
     /**
      * Get current balance formatted with currency symbol
      */
-    public function getFormattedBalanceAttribute(): string
-    {
-        return '$' . number_format($this->balance, 2);
-    }
+    // public function getFormattedBalanceAttribute(): string
+    // {
+    //     return '$' . number_format($this->balance, 2);
+    // }
 
     /**
      * Get wallet name with balance (e.g., "Primary Wallet ($100.00)")

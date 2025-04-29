@@ -22,7 +22,7 @@
         <p><strong>Description:</strong> {{ $transaction->description ?? 'N/A' }}</p>
     </div>
     <div class="footer">
-        <p>Thank you for using DewanBanking!</p>
+        <p>Thank you for using GenZWallet!</p>
     </div>
 </body>
 </html>
