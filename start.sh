@@ -12,10 +12,7 @@ if [ ! -f .env ]; then
 fi
 
 # Generate app key if needed
-php artisan key:generate
-
-# Run migrations
-php artisan migrate --force
+php artisan key:generate || true
 
 # Start the Laravel app
 php artisan serve --host=0.0.0.0 --port=${PORT:-8000}
