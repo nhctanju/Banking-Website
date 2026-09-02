@@ -1,0 +1,11 @@
+[build.nixpacks]
+providers = ["php", "composer", "nodejs"]
+
+[build.nixpacks.phases.setup]
+nixPkgs = ["php82"]
+
+[build.nixpacks.phases.install]
+cmds = ["composer install --no-dev --optimize-autoloader"]
+
+[build.nixpacks.phases.build]
+cmds = ["php artisan key:generate || true"]
