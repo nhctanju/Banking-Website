@@ -3,6 +3,7 @@ providers = ["php", "composer", "nodejs"]
 
 [build.nixpacks.phases.setup]
 nixPkgs = ["php82"]
+cmds = ["mkdir -p /usr/local/bin && ln -sf /nix/store/$(find /nix/store -name 'php' -type f | head -1 | xargs dirname | xargs dirname)/bin/php /usr/local/bin/php"]
 
 [build.nixpacks.phases.install]
 cmds = ["composer install --no-dev --optimize-autoloader"]
